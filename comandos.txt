@@ -1,0 +1,16 @@
+kubectl apply -f ./udagram-api-feed/kubernetes/deployment.yaml 
+kubectl apply -f ./udagram-api-feed/kubernetes/service.yaml 
+kubectl apply -f ./udagram-api-user/kubernetes/deployment.yaml 
+kubectl apply -f ./udagram-api-user/kubernetes/service.yaml 
+kubectl apply -f ./reverse-proxy/deployment.yaml 
+kubectl apply -f ./reverse-proxy/service.yaml 
+
+kubectl delete -f ./udagram-api-feed/kubernetes/deployment.yaml 
+kubectl delete -f ./udagram-api-feed/kubernetes/service.yaml 
+kubectl delete -f ./udagram-api-user/kubernetes/deployment.yaml 
+kubectl delete -f ./udagram-api-user/kubernetes/service.yaml 
+kubectl delete -f ./reverse-proxy/deployment.yaml 
+kubectl delete -f ./reverse-proxy/service.yaml 
+
+kubectl get secret
+kubectl describe secret udagram-env-vars

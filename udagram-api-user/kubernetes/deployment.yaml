@@ -19,3 +19,44 @@ spec:
         image: maikonb/udagram-api-user
         ports:
         - containerPort: 8080
+        env:
+          - name: POSTGRES_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: udagram-env-vars
+                key: POSTGRES_USERNAME        
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: udagram-env-vars
+                key: POSTGRES_PASSWORD 
+          - name: POSTGRES_HOST
+            valueFrom:
+              secretKeyRef:
+                name: udagram-env-vars
+                key: POSTGRES_HOST 
+          - name: POSTGRES_DB
+            valueFrom:
+              secretKeyRef:
+                name: udagram-env-vars
+                key: POSTGRES_DB 
+          - name: AWS_BUCKET
+            valueFrom:
+              secretKeyRef:
+                name: udagram-env-vars
+                key: AWS_BUCKET 
+          - name: AWS_REGION
+            valueFrom:
+              secretKeyRef:
+                name: udagram-env-vars
+                key: AWS_REGION                                 
+          - name: AWS_PROFILE
+            valueFrom:
+              secretKeyRef:
+                name: udagram-env-vars
+                key: AWS_PROFILE                                 
+          - name: JWT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: udagram-env-vars
+                key: JWT_SECRET  
