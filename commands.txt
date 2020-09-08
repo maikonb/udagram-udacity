@@ -1,3 +1,7 @@
+
+minikube addons enable ingress
+minikube addons enable metrics-server
+
 kubectl apply -f ./udagram-api-feed/kubernetes/deployment.yaml 
 kubectl apply -f ./udagram-api-feed/kubernetes/service.yaml 
 kubectl apply -f ./udagram-api-user/kubernetes/deployment.yaml 
@@ -6,6 +10,11 @@ kubectl apply -f ./reverse-proxy/deployment.yaml
 kubectl apply -f ./reverse-proxy/service.yaml 
 kubectl apply -f ./udagram-frontend/kubernetes/deployment.yaml 
 kubectl apply -f ./udagram-frontend/kubernetes/service.yaml 
+
+
+kubectl autoscale deployment udagram-api-feed --cpu-percent=50 --min=2 --max=10
+kubectl get hpa
+kubectl describe hpa
 
 
 kubectl delete -f ./udagram-api-feed/kubernetes/deployment.yaml 
@@ -17,6 +26,7 @@ kubectl delete -f ./reverse-proxy/service.yaml
 kubectl delete -f ./udagram-frontend/kubernetes/deployment.yaml 
 kubectl delete -f ./udagram-frontend/kubernetes/service.yaml 
 kubectl delete -f ./udagram-frontend/kubernetes/ingress.yaml
+kubectl delete hpa udagram-api-feed
 
 kubectl get secret
 kubectl describe secret udagram-env-vars
@@ -39,6 +49,7 @@ frontend-ingress   udagram-udacity.frontend.local             80      14s
 minikube addons enable ingress
 🌟  The 'ingress' addon is enabled
 
+# acompanhar a criacao do nginx ingress controller 
 kubectl get pods -n kube-system | grep nginx-ingress-controller
 nginx-ingress-controller-6fc5bcc8c9-6hgjh   0/1     ContainerCreating   0          10s
 
@@ -76,4 +87,10 @@ NAME               REFERENCE                     TARGETS         MINPODS   MAXPO
 udagram-api-feed   Deployment/udagram-api-feed   <unknown>/50%   2         10        0          10s
 
 
+minikube addons enable metrics-server
+# acompanhar a criacao do servidor de metricas
+kubectl get pods -n kube-system | grep metrics-server
+metrics-server-6754dbc9df-kk2dt             0/1     ContainerCreating   0          113s
+
+kubectl delete hpa udagram-api-feed
 
