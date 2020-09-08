@@ -5,7 +5,7 @@ metadata:
   labels:
     app: udagram-api-feed
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: udagram-api-feed
@@ -19,6 +19,12 @@ spec:
         image: maikonb/udagram-api-feed
         ports:
         - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /api/v0/feed
+            port: 8080
+          initialDelaySeconds: 3
+          periodSeconds: 3            
         env:
           - name: POSTGRES_USERNAME
             valueFrom:

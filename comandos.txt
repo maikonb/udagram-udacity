@@ -4,6 +4,9 @@ kubectl apply -f ./udagram-api-user/kubernetes/deployment.yaml
 kubectl apply -f ./udagram-api-user/kubernetes/service.yaml 
 kubectl apply -f ./reverse-proxy/deployment.yaml 
 kubectl apply -f ./reverse-proxy/service.yaml 
+kubectl apply -f ./udagram-frontend/kubernetes/deployment.yaml 
+kubectl apply -f ./udagram-frontend/kubernetes/service.yaml 
+
 
 kubectl delete -f ./udagram-api-feed/kubernetes/deployment.yaml 
 kubectl delete -f ./udagram-api-feed/kubernetes/service.yaml 
@@ -11,6 +14,66 @@ kubectl delete -f ./udagram-api-user/kubernetes/deployment.yaml
 kubectl delete -f ./udagram-api-user/kubernetes/service.yaml 
 kubectl delete -f ./reverse-proxy/deployment.yaml 
 kubectl delete -f ./reverse-proxy/service.yaml 
+kubectl delete -f ./udagram-frontend/kubernetes/deployment.yaml 
+kubectl delete -f ./udagram-frontend/kubernetes/service.yaml 
+kubectl delete -f ./udagram-frontend/kubernetes/ingress.yaml
 
 kubectl get secret
 kubectl describe secret udagram-env-vars
+kubectl describe services
+
+
+
+
+kubectl get service udagram-frontend --watch
+NAME               TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
+udagram-frontend   ClusterIP   10.109.46.61   <none>        80/TCP    6h3m
+
+kubectl apply -f udagram-frontend/kubernetes/ingress.yaml
+ingress.networking.k8s.io/frontend-ingress created
+
+kubectl get ingress
+NAME               HOSTS                            ADDRESS   PORTS   AGE
+frontend-ingress   udagram-udacity.frontend.local             80      14s
+
+minikube addons enable ingress
+🌟  The 'ingress' addon is enabled
+
+kubectl get pods -n kube-system | grep nginx-ingress-controller
+nginx-ingress-controller-6fc5bcc8c9-6hgjh   0/1     ContainerCreating   0          10s
+
+kubectl get pods -n kube-system | grep nginx-ingress-controller
+nginx-ingress-controller-6fc5bcc8c9-6hgjh   1/1     Running   0          52s
+
+kubectl get ingress
+NAME               HOSTS                            ADDRESS          PORTS   AGE
+frontend-ingress   udagram-udacity.frontend.local   192.168.99.105   80      3m13s
+
+sudo vim /etc/hosts
+  192.168.99.105  udagram-udacity.frontend.local
+
+
+## Auto scaling
+
+maikon@worknote:~/workspace/taking-courses/udagram-udacity$ kubectl get pods
+NAME                                READY   STATUS    RESTARTS   AGE
+reverseproxy-8856db55c-r7r5m        1/1     Running   0          5m32s
+udagram-api-feed-86c7c57568-mq6gp   1/1     Running   0          5m33s
+udagram-api-feed-86c7c57568-wcwkd   1/1     Running   0          5m33s
+udagram-api-user-58c947bc9-24kp5    1/1     Running   0          5m33s
+udagram-api-user-58c947bc9-t6wpc    1/1     Running   0          5m33s
+udagram-frontend-9b454b66d-ldqpc    1/1     Running   0          5m32s
+maikon@worknote:~/workspace/taking-courses/udagram-udacity$ kubectl get deployments.apps
+NAME               READY   UP-TO-DATE   AVAILABLE   AGE
+reverseproxy       1/1     1            1           5m45s
+udagram-api-feed   2/2     2            2           5m46s
+udagram-api-user   2/2     2            2           5m46s
+udagram-frontend   1/1     1            1           5m45s
+maikon@worknote:~/workspace/taking-courses/udagram-udacity$ kubectl autoscale deployment udagram-api-feed --cpu-percent=50 --min=2 --max=10
+horizontalpodautoscaler.autoscaling/udagram-api-feed autoscaled
+maikon@worknote:~/workspace/taking-courses/udagram-udacity$ kubectl get hpa
+NAME               REFERENCE                     TARGETS         MINPODS   MAXPODS   REPLICAS   AGE
+udagram-api-feed   Deployment/udagram-api-feed   <unknown>/50%   2         10        0          10s
+
+
+

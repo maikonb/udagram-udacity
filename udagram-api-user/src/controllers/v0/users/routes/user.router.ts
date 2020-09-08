@@ -7,7 +7,9 @@ const router: Router = Router();
 
 router.use('/auth', AuthRouter);
 
-router.get('/');
+router.get('/', (req: Request, res: Response) => {
+  res.status(200).send({}); // self healing response
+});
 
 router.get('/:id', async (req: Request, res: Response) => {
   const {id} = req.params;
